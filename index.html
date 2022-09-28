@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Speedtest</title>
+	<style>
+		h1 {
+			margin-bottom: .5em;
+		}
+
+		.data {
+			font-family: monospace;
+			font-size: 1.6125em;
+			margin-bottom: 2em;
+		}
+	</style>
+</head>
+
+<body>
+	<h1>Latest:</h1>
+	<div id="latest-data" class="data">
+		Loading...
+	</div>
+
+	<h1>Overall:</h1>
+	<pre id="overall-data" class="data"></pre>
+
+	<a href="/data.json">Link to JSON</a>
+
+	<script>
+		const toMb = bytes => bytes / 1000000;
+
+		(async () => {
+			const data = await (await fetch('/data.json')).json();
+
+			const latest = data.all[data.count - 1];
+
+			console.log(latest);
+
+			document.querySelector('#latest-data').innerHTML =
+				`
+					Download speed: <b>${toMb(latest.bytes).toFixed(2)}Mbps</b >
+					<br >
+					Elapsed time: ${latest.elapsed}ms
+				`
+
+			const { all, ..._ } = data
+			document.querySelector('#overall-data').innerText = JSON.stringify(_, null, 2);
+		})()
+	</script>
+</body>
+
+</html>
